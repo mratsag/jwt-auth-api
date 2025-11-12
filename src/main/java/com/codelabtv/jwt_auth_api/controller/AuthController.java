@@ -1,11 +1,11 @@
 package com.codelabtv.jwt_auth_api.controller;
-import com.codelabtv.jwt_auth_api.dto.LoginRequest;
-import com.codelabtv.jwt_auth_api.dto.LoginResponse;
-import com.codelabtv.jwt_auth_api.dto.RegisterRequest;
+import com.codelabtv.jwt_auth_api.dto.*;
 import com.codelabtv.jwt_auth_api.service.AuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,6 +26,18 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login (@Valid @RequestBody LoginRequest request){
         LoginResponse response = authService.login(request);
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/refresh")
+    public ResponseEntity<RefreshTokenResponse> refresh(@Valid @RequestBody RefreshTokenRequest request){
+        RefreshTokenResponse response = authService.refreshToken(request);
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<String> logout(@AuthenticationPrincipal UserDetails userDetails){
+        String response = authService.logout(userDetails.getUsername());
         return ResponseEntity.ok(response);
     }
 }
